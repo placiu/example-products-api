@@ -12,6 +12,7 @@ class ProductPrice extends Model
     use HasFactory, HasUlids;
 
     protected $fillable = [
+        'product_id',
         'value',
         'precision'
     ];
