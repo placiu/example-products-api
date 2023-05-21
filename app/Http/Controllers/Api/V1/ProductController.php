@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductIndexRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
@@ -10,9 +11,18 @@ use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    public function index()
+    const DEFAULT_PER_PAGE = 10;
+
+    public function index(ProductIndexRequest $request)
     {
-        $products = Product::with('prices')->paginate(request('paginate') ?? 10);
+        $requestData = $request->validated();
+        $products = Product::query()
+            ->with('prices')
+            ->when(isset($requestData['name']), fn($query) => $query->where('name', 'like', '%' . $requestData['name'] . '%'))
+            ->when(isset($requestData['description']), fn($query) => $query->where('description', 'like', '%' . $requestData['description'] . '%'))
+            ->orderBy($requestData['description'] ?? 'name', $requestData['description'] ?? 'asc')
+            ->paginate(self::DEFAULT_PER_PAGE)
+        ;
 
         return ProductResource::collection($products);
     }
