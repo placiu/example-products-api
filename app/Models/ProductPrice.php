@@ -21,6 +21,20 @@ class ProductPrice extends Model
         'updated_at' => 'datetime',
     ];
 
+    public function price(): string
+    {
+        if (! (int)$this->attributes['precision']) {
+            return $this->attributes['value'];
+        }
+
+        $precisionValue = 1;
+        for($i = 1; $i <= $this->attributes['precision']; $i++) {
+            $precisionValue = $precisionValue * 10;
+        }
+
+        return $this->attributes['value'] / $precisionValue;
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
