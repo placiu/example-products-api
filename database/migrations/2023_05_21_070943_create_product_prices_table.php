@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('product_prices', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('product_id')->constrained();
+            $table->foreignUlid('product_id')->constrained()->cascadeOnDelete();
             $table->integer('value');
             $table->integer('precision')->default(2);
             $table->timestamps();
