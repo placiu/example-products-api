@@ -20,6 +20,8 @@ class ProductIndexRequest extends FormRequest
             'sortDirection' => ['nullable', Rule::in(['desc', 'asc', 'DESC', 'ASC'])],
             'name' => ['nullable', 'string', 'min:1', 'max:255'],
             'description' => ['nullable', 'string', 'min:1', 'max:255'],
+            'price-min' => ['nullable', 'integer', 'min:0'],
+            'price-max' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

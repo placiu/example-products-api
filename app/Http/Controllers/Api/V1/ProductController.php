@@ -7,22 +7,20 @@ use App\Http\Requests\ProductIndexRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Repositories\ProductRepository;
 use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    const DEFAULT_PER_PAGE = 10;
+    public function __construct(
+        public ProductRepository $repository
+    ) {}
 
     public function index(ProductIndexRequest $request)
     {
-        $requestData = $request->validated();
-        $products = Product::query()
-            ->with('prices')
-            ->when(isset($requestData['name']), fn($query) => $query->where('name', 'like', '%' . $requestData['name'] . '%'))
-            ->when(isset($requestData['description']), fn($query) => $query->where('description', 'like', '%' . $requestData['description'] . '%'))
-            ->orderBy($requestData['description'] ?? 'name', $requestData['description'] ?? 'asc')
-            ->paginate(self::DEFAULT_PER_PAGE)
-        ;
+        $filters = $request->validated();
+        
+        $products = $this->repository->filterAll($filters);
 
         return ProductResource::collection($products);
     }
@@ -31,7 +29,7 @@ class ProductController extends Controller
     {
         $productData = $request->validated();
 
-        $product = Product::create($productData);
+        $product = $this->repository->create($productData);
 
         return new ProductResource($product);
     }
@@ -45,16 +43,14 @@ class ProductController extends Controller
     {
         $productData = $request->validated();
 
-        $product->name = $productData['name'];
-        $product->description = $productData['description'];
-        $product->save();
+        $product = $this->repository->update($product, $productData);
 
         return new ProductResource($product);
     }
 
     public function destroy(Product $product)
     {
-        $product->delete();
+        $this->repository->delete($product);
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
