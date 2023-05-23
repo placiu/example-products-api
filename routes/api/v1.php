@@ -16,7 +16,9 @@ Route::controller(AuthController::class)->group(function() {
     Route::post('login', 'login');
 });
 
-// Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('products', ProductController::class);
-    Route::apiResource('products-prices', ProductPriceController::class);
-// });
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::apiResource('products-prices', ProductPriceController::class)->only(['index', 'show']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('products', ProductController::class)->except(['index', 'show']);
+    Route::apiResource('products-prices', ProductPriceController::class)->except(['index', 'show']);
+});
