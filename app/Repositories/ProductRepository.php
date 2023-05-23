@@ -45,8 +45,8 @@ class ProductRepository
 
     public function update(Product $product, array $data): Product
     {
-        $product->name = $data['name'];
-        $product->description = $data['description'];
+        $product->name = $data['name'] ?? $product->name;
+        $product->description = $data['description'] ?? $product->description;
         $product->save();
 
         return $product;

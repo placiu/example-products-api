@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductIndexRequest;
-use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
@@ -25,7 +26,7 @@ class ProductController extends Controller
         return ProductResource::collection($products);
     }
 
-    public function store(ProductRequest $request)
+    public function store(ProductStoreRequest $request)
     {
         $productData = $request->validated();
 
@@ -39,7 +40,7 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
         $productData = $request->validated();
 
